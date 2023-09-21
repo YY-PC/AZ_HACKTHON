@@ -68,6 +68,7 @@ placeholder = st.empty()
 # )
 # print(transdata)
 
+click = st.button('Get Recommendations')
 
 
      
@@ -78,8 +79,6 @@ for seconds in range(200):
 
 
     with placeholder.container():
-        click = st.button('Get Recommendations')
-
         if click:
             with st.spinner('Recommending...'):
                 df_train = r.get_data()
