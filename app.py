@@ -32,11 +32,12 @@ st.set_page_config(
 st.title('State Street Client Information')
 
 #job_filter = st.selectbox("Select the Job", pd.unique(df['job']))
-demission = st.selectbox("Dimension", pd.unique(df.columns))
-# creating a single-element container.
-clientId = st.selectbox("Client", pd.unique(df['clientId']))
+selectCol1, selectCol2 = st.columns(2)
+with selectCol1:
+    demission = st.selectbox("Dimension", pd.unique(df.columns))
+with selectCol2:
+    clientId = st.selectbox("Client", pd.unique(df['clientId']))
 placeholder = st.empty()
-
 
 # dataframe filter 
 
@@ -71,7 +72,7 @@ placeholder = st.empty()
 click = st.button('Get Recommendations')
 
 
-     
+clientTransData = transdata[transdata['client']==clientId]
 
 for seconds in range(200):
 #while True: 
@@ -79,12 +80,7 @@ for seconds in range(200):
 
 
     with placeholder.container():
-        if click:
-            with st.spinner('Recommending...'):
-                df_train = r.get_data()
-                for clientId in df['clientId']:
-                    st.write(clientId, ' is recommended: ',
-                             r.recommend(clientId, r.df_mb(df_train), r.popularity_based(df_train)))
+
         st.header("Assets Summary data view")
         fig_col1, fig_col2 = st.columns(2)
         with fig_col1:
@@ -99,10 +95,18 @@ for seconds in range(200):
         
         fig_col3, fig_col4 = st.columns(2)
         with fig_col3:
-            st.dataframe(transdata[transdata['client']==clientId])
+            st.dataframe(clientTransData)
         with fig_col4:
             st.markdown("Montly Transaction: " + demission)
-            st.line_chart(transdata, y='ts_amt', x = 't_bis_mon')
+            st.line_chart(clientTransData, y='ts_amt', x = 't_bis_mon')
 
+                
+        if click:
+                with st.spinner('Recommending...'):
+                    df_train = r.get_data()
+                    for clientId in df['clientId']:
+                        st.write(clientId, ' is recommended: ',
+                                r.recommend(clientId, r.df_mb(df_train), r.popularity_based(df_train)))        
+        
         time.sleep(1)
     #placeholder.empty()
