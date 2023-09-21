@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import time
 import plotly.express as px
+import recommendation as r
 import pyodbc
 from  PIL import Image
 
@@ -98,3 +99,12 @@ for seconds in range(200):
 
         time.sleep(1)
     #placeholder.empty()
+
+
+click = st.button('Get Recommendations')
+
+if click:
+    with st.spinner('Please wait for a while...'):
+        df_train = r.get_data()
+        for clientId in df['clientId']:
+            st.write(clientId, ' is recommended: ', r.recommend(clientId, df_train, r.df_mb(df_train)))
