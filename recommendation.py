@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics.pairwise import pairwise_distances
+import streamlit
+
+#from sklearn.metrics.pairwise import pairwise_distances
 
 train_fields = ['clientId', 'loan','deposits','pension','credit','mortage','report','asset','investment','plan','consulting']
-
+@streamlit.cache_data
 def get_data():
     return pd.read_csv("./train_data.csv")
 
@@ -26,12 +28,17 @@ def df_mb(df):
     return df_mb
 def recommend(clientId, df, prediction):
     client_row = df[df.index == clientId]
+    print(df.index)
+    print(clientId)
+    print(df[df.index == clientId])
     client_services = list(filter(lambda product: client_row[product].to_numpy()[0] == 1, client_row))
 
     recom = {key: prediction[key] for key in prediction if key not in client_services}
 
     recom_sort = dict(sorted(recom.items(), key=lambda item: item[1], reverse=True))
 
-    return recom_sort
+    return recom_sort.keys()
+
+#print(recommend('C001', df_mb(get_data()), popularity_based(get_data())))
 
 

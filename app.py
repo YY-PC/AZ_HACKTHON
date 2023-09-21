@@ -78,6 +78,14 @@ for seconds in range(200):
 
 
     with placeholder.container():
+        click = st.button('Get Recommendations')
+
+        if click:
+            with st.spinner('Recommending...'):
+                df_train = r.get_data()
+                for clientId in df['clientId']:
+                    st.write(clientId, ' is recommended: ',
+                             r.recommend(clientId, r.df_mb(df_train), r.popularity_based(df_train)))
         st.header("Assets Summary data view")
         fig_col1, fig_col2 = st.columns(2)
         with fig_col1:
@@ -99,12 +107,3 @@ for seconds in range(200):
 
         time.sleep(1)
     #placeholder.empty()
-
-
-click = st.button('Get Recommendations')
-
-if click:
-    with st.spinner('Please wait for a while...'):
-        df_train = r.get_data()
-        for clientId in df['clientId']:
-            st.write(clientId, ' is recommended: ', r.recommend(clientId, df_train, r.df_mb(df_train)))
