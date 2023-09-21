@@ -13,14 +13,15 @@ USERNAME='azureuser'
 PASSWORD='AZpwd123123123'
 
 connectionString = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SERVER};DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD}'
-conn = pyodbc.connect(connectionString) 
+# conn = pyodbc.connect(connectionString) 
 
-cursor = conn.cursor()
 
 
 #read csv
 df = pd.read_csv("./client.csv")
-im = Image.open("sslogo.png")
+transdata = pd.read_csv("./transaction.csv")
+print(transdata)
+im = Image.open("./sslogo.png")
 st.set_page_config(
     page_title = 'State Street FGSP',
     page_icon = im,
@@ -43,28 +44,28 @@ placeholder = st.empty()
 # near real-time / live feed simulation 
 
 
-cursor = conn.cursor()
-cursor.execute('select client, t_bis_mon, ts_amt  from dbo.trancation_data')    
-records = cursor.fetchall()
+# cursor = conn.cursor()
+# cursor.execute('select client, t_bis_mon, ts_amt  from dbo.trancation_data')    
+# records = cursor.fetchall()
 
 #transdata=pd.DataFrame(records)
 #transdata.columns=transdata.keys()
 
-col1 = [];
-col2 = [];
-col3 = [];
-for row in records:
-    print(f'{row[0]} == {clientId}')
-    print(row[0] == clientId)
-    if row[0].strip() == clientId:
-        col1.append(row[0].strip());
-        col2.append(row[1].strip());
-        col3.append(row[2].strip());
-transdata=pd.DataFrame(
-    {'clientId': col1, 'bis_mon': col2, 'trans_amt': col3},
-    columns=['clientId', 'bis_mon', 'trans_amt']
-)
-print(transdata)
+# col1 = [];
+# col2 = [];
+# col3 = [];
+# for row in records:
+#     print(f'{row[0]} == {clientId}')
+#     print(row[0] == clientId)
+#     if row[0].strip() == clientId:
+#         col1.append(row[0].strip());
+#         col2.append(row[1].strip());
+#         col3.append(row[2].strip());
+# transdata=pd.DataFrame(
+#     {'clientId': col1, 'bis_mon': col2, 'trans_amt': col3},
+#     columns=['clientId', 'bis_mon', 'trans_amt']
+# )
+# print(transdata)
 
 
 
@@ -90,10 +91,10 @@ for seconds in range(200):
         
         fig_col3, fig_col4 = st.columns(2)
         with fig_col3:
-            st.dataframe(transdata)
+            st.dataframe(transdata[transdata['client']==clientId])
         with fig_col4:
-            st.markdown("Montly Translate: " + demission)
-            st.line_chart(transdata, y='trans_amt', x = 'bis_mon')
+            st.markdown("Montly Transaction: " + demission)
+            st.line_chart(transdata, y='ts_amt', x = 't_bis_mon')
 
         time.sleep(1)
     #placeholder.empty()
