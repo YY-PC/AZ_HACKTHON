@@ -13,9 +13,9 @@ USERNAME='azureuser'
 PASSWORD='AZpwd123123123'
 
 connectionString = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SERVER};DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD}'
-#conn = pyodbc.connect(connectionString)
+conn = pyodbc.connect(connectionString) 
 
-#cursor = conn.cursor()
+cursor = conn.cursor()
 
 
 #read csv
@@ -31,9 +31,10 @@ st.title('State Street Client Information')
 
 #job_filter = st.selectbox("Select the Job", pd.unique(df['job']))
 demission = st.selectbox("Dimension", pd.unique(df.columns))
-
 # creating a single-element container.
+clientId = st.selectbox("Client", pd.unique(df['clientId']))
 placeholder = st.empty()
+
 
 # dataframe filter 
 
@@ -41,11 +42,33 @@ placeholder = st.empty()
 
 # near real-time / live feed simulation 
 
-#cursor = conn.cursor()
-#cursor.execute('select * from dbo.test_tb')
-#records = cursor.fetchall()
-#for r in records:
-#    st.write(f"{r[0]} has a : {r[1]}")
+
+cursor = conn.cursor()
+cursor.execute('select client, t_bis_mon, ts_amt  from dbo.trancation_data')    
+records = cursor.fetchall()
+
+#transdata=pd.DataFrame(records)
+#transdata.columns=transdata.keys()
+
+col1 = [];
+col2 = [];
+col3 = [];
+for row in records:
+    print(f'{row[0]} == {clientId}')
+    print(row[0] == clientId)
+    if row[0].strip() == clientId:
+        col1.append(row[0].strip());
+        col2.append(row[1].strip());
+        col3.append(row[2].strip());
+transdata=pd.DataFrame(
+    {'clientId': col1, 'bis_mon': col2, 'trans_amt': col3},
+    columns=['clientId', 'bis_mon', 'trans_amt']
+)
+print(transdata)
+
+
+
+     
 
 for seconds in range(200):
 #while True: 
@@ -63,8 +86,14 @@ for seconds in range(200):
             scale_count = pd.DataFrame({demission: scale_count.index, "count": scale_count.values})
             fig = px.pie(scale_count, values = 'count', names = demission)
             st.write(fig)
+
         
-        
+        fig_col3, fig_col4 = st.columns(2)
+        with fig_col3:
+            st.dataframe(transdata)
+        with fig_col4:
+            st.markdown("Montly Translate: " + demission)
+            st.line_chart(transdata, y='trans_amt', x = 'bis_mon')
 
         time.sleep(1)
     #placeholder.empty()
