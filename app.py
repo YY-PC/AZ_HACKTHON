@@ -13,9 +13,9 @@ USERNAME='azureuser'
 PASSWORD='AZpwd123123123'
 
 connectionString = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SERVER};DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD}'
-conn = pyodbc.connect(connectionString) 
+#conn = pyodbc.connect(connectionString)
 
-cursor = conn.cursor()
+#cursor = conn.cursor()
 
 
 #read csv
@@ -41,9 +41,9 @@ placeholder = st.empty()
 
 # near real-time / live feed simulation 
 
-cursor = conn.cursor()
-cursor.execute('select * from dbo.test_tb')    
-records = cursor.fetchall()
+#cursor = conn.cursor()
+#cursor.execute('select * from dbo.test_tb')
+#records = cursor.fetchall()
 #for r in records:
 #    st.write(f"{r[0]} has a : {r[1]}")
 
