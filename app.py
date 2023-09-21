@@ -20,11 +20,11 @@ connectionString = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={SERVER};DA
 #read csv
 df = pd.read_csv("./client.csv")
 transdata = pd.read_csv("./transaction.csv")
-print(transdata)
-im = Image.open("./sslogo.png")
+
+# im = Image.open("./sslogo.png")
 st.set_page_config(
     page_title = 'State Street FGSP',
-    page_icon = im,
+    page_icon = '⛵',
     layout = 'wide'
 )
 
