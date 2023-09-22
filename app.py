@@ -106,7 +106,7 @@ for seconds in range(200):
                     df_train = r.get_data()
                     for clientId in df['clientId']:
                         st.write(clientId, ' is recommended: ',
-                                r.recommend(clientId, r.df_mb(df_train), r.popularity_based(df_train)))        
+                                r.recommend(clientId, r.df_mb(df_train),r.mixed_recommend(clientId, df_train, r.df_mb(df_train))))
         
         time.sleep(1)
     #placeholder.empty()

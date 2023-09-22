@@ -1,8 +1,7 @@
 import numpy as np
 import pandas as pd
 import streamlit
-
-#from sklearn.metrics.pairwise import pairwise_distances
+from sklearn.tree import DecisionTreeClassifier
 
 train_fields = ['clientId', 'loan','deposits','pension','credit','mortage','report','asset','investment','plan','consulting']
 @streamlit.cache_data
@@ -10,7 +9,7 @@ def get_data():
     return pd.read_csv("./train_data.csv")
 
 #print(df_train)
-def popularity_based(df):
+def popularity_recommend(df):
     top_col = {}
     for col in df.columns[9:]:
         top_col[col] = df[col].value_counts()[1]
@@ -20,24 +19,45 @@ def popularity_based(df):
 
     return top_col
 
-#print(cos_relation(df_clientIndex(df_train)))
+def model_recommend(clientId, df, model=DecisionTreeClassifier(max_depth=10)):
+    modelrs = {}
+    new_df = df[df.columns.intersection(train_fields)]
+    for item in new_df.columns:
+        y_train = new_df[item].astype('int')
+        x_train = new_df.drop([item], axis=1)
+        model.fit(x_train, y_train)
+        p_train = model.predict_proba(x_train[x_train.index == clientId])[:, 1]
+
+        modelrs[item] = p_train[0]
+    return modelrs
 
 def df_mb(df):
     df_mb = df.copy()
     df_mb = df_mb.set_index('clientId')
     return df_mb
+
+#print(model_recommend('C100', df_mb(get_data())))
+
+def mixed_recommend(clientId, df_p, df_m):
+    pb = popularity_recommend(df_p)
+    mb = model_recommend(clientId, df_m)
+    mixed = {}
+    for k, v in pb.items():
+        mixed[k] = v * 0.5 + mb[k] * 0.5
+
+    return mixed
+
+#print(mixed_recommend('C100', get_data(), df_mb(get_data())))
 def recommend(clientId, df, prediction):
     client_row = df[df.index == clientId]
-    print(df.index)
-    print(clientId)
-    print(df[df.index == clientId])
+
     client_services = list(filter(lambda product: client_row[product].to_numpy()[0] == 1, client_row))
 
-    recom = {key: prediction[key] for key in prediction if key not in client_services}
+    rec_result = {key: prediction[key] for key in prediction if key not in client_services}
 
-    recom_sort = dict(sorted(recom.items(), key=lambda item: item[1], reverse=True))
+    rec_result_sort = dict(sorted(rec_result.items(), key=lambda item: item[1], reverse=True))
 
-    return recom_sort.keys()
+    return rec_result_sort.keys()
 
 #print(recommend('C001', df_mb(get_data()), popularity_based(get_data())))
 
