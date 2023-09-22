@@ -5,8 +5,8 @@ import pandas as pd
 import time
 import plotly.express as px
 import recommendation as r
-import pyodbc
-from  PIL import Image
+#import pyodbc
+#from  PIL import Image
 
 SERVER='azure-sql-db-server-ptlib.database.windows.net'
 DATABASE='sql-db-ptlib'
