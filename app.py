@@ -97,7 +97,7 @@ for seconds in range(200):
         with fig_col3:
             st.dataframe(clientTransData)
         with fig_col4:
-            st.markdown("Montly Transaction: " + demission)
+            st.markdown("Monthly Transaction: ")
             st.line_chart(clientTransData, y='ts_amt', x = 't_bis_mon')
 
                 
