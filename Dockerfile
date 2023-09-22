@@ -9,8 +9,6 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-RUN sudo ACCEPT_EULA=Y apt-get install -y msodbcsql17
-
 RUN git clone https://github.com/YY-PC/AZ_HACKTHON.git .
 
 RUN pip3 install -r requirements.txt
